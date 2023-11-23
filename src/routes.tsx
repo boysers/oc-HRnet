@@ -1,13 +1,14 @@
 import { RouteObject } from 'react-router-dom'
+import { CreateEmployee, EmployeeList } from './views'
 
 export const routes: RouteObject[] = [
 	{
 		path: '/',
-		element: (
-			<div>
-				<h1>HRnet</h1>
-			</div>
-		),
+		element: <CreateEmployee />,
+	},
+	{
+		path: '/employees',
+		element: <EmployeeList />,
 	},
 	{
 		path: '*',
