@@ -1,245 +1,37 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import styled from 'styled-components'
+import { DatePicker, Modal, SelectMenu } from '@/components'
+import { STATES } from '@/constants/states'
 
-const states = [
-	{
-		name: 'Alabama',
-		abbreviation: 'AL',
-	},
-	{
-		name: 'Alaska',
-		abbreviation: 'AK',
-	},
-	{
-		name: 'American Samoa',
-		abbreviation: 'AS',
-	},
-	{
-		name: 'Arizona',
-		abbreviation: 'AZ',
-	},
-	{
-		name: 'Arkansas',
-		abbreviation: 'AR',
-	},
-	{
-		name: 'California',
-		abbreviation: 'CA',
-	},
-	{
-		name: 'Colorado',
-		abbreviation: 'CO',
-	},
-	{
-		name: 'Connecticut',
-		abbreviation: 'CT',
-	},
-	{
-		name: 'Delaware',
-		abbreviation: 'DE',
-	},
-	{
-		name: 'District Of Columbia',
-		abbreviation: 'DC',
-	},
-	{
-		name: 'Federated States Of Micronesia',
-		abbreviation: 'FM',
-	},
-	{
-		name: 'Florida',
-		abbreviation: 'FL',
-	},
-	{
-		name: 'Georgia',
-		abbreviation: 'GA',
-	},
-	{
-		name: 'Guam',
-		abbreviation: 'GU',
-	},
-	{
-		name: 'Hawaii',
-		abbreviation: 'HI',
-	},
-	{
-		name: 'Idaho',
-		abbreviation: 'ID',
-	},
-	{
-		name: 'Illinois',
-		abbreviation: 'IL',
-	},
-	{
-		name: 'Indiana',
-		abbreviation: 'IN',
-	},
-	{
-		name: 'Iowa',
-		abbreviation: 'IA',
-	},
-	{
-		name: 'Kansas',
-		abbreviation: 'KS',
-	},
-	{
-		name: 'Kentucky',
-		abbreviation: 'KY',
-	},
-	{
-		name: 'Louisiana',
-		abbreviation: 'LA',
-	},
-	{
-		name: 'Maine',
-		abbreviation: 'ME',
-	},
-	{
-		name: 'Marshall Islands',
-		abbreviation: 'MH',
-	},
-	{
-		name: 'Maryland',
-		abbreviation: 'MD',
-	},
-	{
-		name: 'Massachusetts',
-		abbreviation: 'MA',
-	},
-	{
-		name: 'Michigan',
-		abbreviation: 'MI',
-	},
-	{
-		name: 'Minnesota',
-		abbreviation: 'MN',
-	},
-	{
-		name: 'Mississippi',
-		abbreviation: 'MS',
-	},
-	{
-		name: 'Missouri',
-		abbreviation: 'MO',
-	},
-	{
-		name: 'Montana',
-		abbreviation: 'MT',
-	},
-	{
-		name: 'Nebraska',
-		abbreviation: 'NE',
-	},
-	{
-		name: 'Nevada',
-		abbreviation: 'NV',
-	},
-	{
-		name: 'New Hampshire',
-		abbreviation: 'NH',
-	},
-	{
-		name: 'New Jersey',
-		abbreviation: 'NJ',
-	},
-	{
-		name: 'New Mexico',
-		abbreviation: 'NM',
-	},
-	{
-		name: 'New York',
-		abbreviation: 'NY',
-	},
-	{
-		name: 'North Carolina',
-		abbreviation: 'NC',
-	},
-	{
-		name: 'North Dakota',
-		abbreviation: 'ND',
-	},
-	{
-		name: 'Northern Mariana Islands',
-		abbreviation: 'MP',
-	},
-	{
-		name: 'Ohio',
-		abbreviation: 'OH',
-	},
-	{
-		name: 'Oklahoma',
-		abbreviation: 'OK',
-	},
-	{
-		name: 'Oregon',
-		abbreviation: 'OR',
-	},
-	{
-		name: 'Palau',
-		abbreviation: 'PW',
-	},
-	{
-		name: 'Pennsylvania',
-		abbreviation: 'PA',
-	},
-	{
-		name: 'Puerto Rico',
-		abbreviation: 'PR',
-	},
-	{
-		name: 'Rhode Island',
-		abbreviation: 'RI',
-	},
-	{
-		name: 'South Carolina',
-		abbreviation: 'SC',
-	},
-	{
-		name: 'South Dakota',
-		abbreviation: 'SD',
-	},
-	{
-		name: 'Tennessee',
-		abbreviation: 'TN',
-	},
-	{
-		name: 'Texas',
-		abbreviation: 'TX',
-	},
-	{
-		name: 'Utah',
-		abbreviation: 'UT',
-	},
-	{
-		name: 'Vermont',
-		abbreviation: 'VT',
-	},
-	{
-		name: 'Virgin Islands',
-		abbreviation: 'VI',
-	},
-	{
-		name: 'Virginia',
-		abbreviation: 'VA',
-	},
-	{
-		name: 'Washington',
-		abbreviation: 'WA',
-	},
-	{
-		name: 'West Virginia',
-		abbreviation: 'WV',
-	},
-	{
-		name: 'Wisconsin',
-		abbreviation: 'WI',
-	},
-	{
-		name: 'Wyoming',
-		abbreviation: 'WY',
-	},
-]
+const ConfirmationModal = styled.div`
+	min-width: 440px;
+	background-color: #ffffff;
+	border-radius: 8px;
+	padding: 15px 30px;
+	position: relative;
+
+	.close-modal {
+		position: absolute;
+		top: -15px;
+		right: -15px;
+		width: 30px;
+		height: 30px;
+		cursor: pointer;
+	}
+
+	p {
+		margin: 0;
+	}
+`
 
 export const CreateEmployee: React.FC = () => {
+	const [isModalOpen, setIsModalOpen] = useState(false)
+
+	const toggleModal = () => {
+		setIsModalOpen((prev) => !prev)
+	}
+
 	return (
 		<>
 			<div className="title">
@@ -256,10 +48,10 @@ export const CreateEmployee: React.FC = () => {
 					<input type="text" id="last-name" />
 
 					<label htmlFor="date-of-birth">Date of Birth</label>
-					<input id="date-of-birth" type="text" />
+					<DatePicker id="date-of-birth" name="date-of-birth" />
 
 					<label htmlFor="start-date">Start Date</label>
-					<input id="start-date" type="text" />
+					<DatePicker id="start-date" name="start-date" />
 
 					<fieldset className="address">
 						<legend>Address</legend>
@@ -271,43 +63,53 @@ export const CreateEmployee: React.FC = () => {
 						<input id="city" type="text" />
 
 						<label htmlFor="state">State</label>
-						<select
+						<SelectMenu
 							name="state"
 							id="state"
-							style={{ fontSize: '16px', padding: '6px 16px' }}
-						>
-							{states.map((state) => (
-								<option key={state.abbreviation} value={state.abbreviation}>
-									{state.name}
-								</option>
-							))}
-						</select>
+							options={STATES.map(({ name, abbreviation }) => ({
+								value: abbreviation,
+								label: name,
+							}))}
+						/>
 
 						<label htmlFor="zip-code">Zip Code</label>
 						<input id="zip-code" type="number" />
 					</fieldset>
 
 					<label htmlFor="department">Department</label>
-					<select name="department" id="department">
-						<option>Sales</option>
-						<option>Marketing</option>
-						<option>Engineering</option>
-						<option>Human Resources</option>
-						<option>Legal</option>
-					</select>
+					<SelectMenu
+						id="department"
+						name="department"
+						options={[
+							'Sales',
+							'Marketing',
+							'Engineering',
+							'Human Resources',
+							'Legal',
+						].map((department) => ({ value: department, label: department }))}
+					/>
 				</form>
 
 				<button
 					onClick={() => {
 						'saveEmployee()'
+						toggleModal()
 					}}
 				>
 					Save
 				</button>
 			</div>
-			<div id="confirmation" className="modal">
-				Employee Created!
-			</div>
+			<Modal isOpen={isModalOpen} onClose={toggleModal}>
+				<ConfirmationModal>
+					<img
+						className="close-modal"
+						src="close-icon.png"
+						alt="close modal"
+						onClick={toggleModal}
+					/>
+					<p>Employee Created!</p>
+				</ConfirmationModal>
+			</Modal>
 		</>
 	)
 }
