@@ -1,5 +1,6 @@
 export interface EmployeesState {
 	data: Array<Employee>
+	error?: string | undefined
 }
 
 export type Employee = {
@@ -12,5 +13,5 @@ export type Employee = {
 	street: string
 	city: string
 	state: string
-	zipCode: number
+	zipCode: string
 }

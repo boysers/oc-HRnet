@@ -1,41 +1,48 @@
-import { selectEmployees, createEmployee } from '@/usecases/employees-slice'
+import { selectEmployees } from '@/usecases/employees-slice'
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from '@/store'
+import { useSelector } from '@/store'
+import { DataTable } from 'oc-hrnet-ui'
+import styled from 'styled-components'
+
+const StyledDataTable = styled.div`
+	max-width: 1088px;
+	width: 100%;
+
+	& > div:first-child {
+		& > div:first-child {
+			width: 100%;
+
+			table {
+				width: 100%;
+			}
+		}
+	}
+`
 
 export const EmployeeList: React.FC = () => {
-	const dispatch = useDispatch()
 	const employees = useSelector(selectEmployees)
+
+	const columns = [
+		{ title: 'First Name', data: 'firstName' },
+		{ title: 'Last Name', data: 'lastName' },
+		{ title: 'Start Date', data: 'startDate' },
+		{ title: 'Department', data: 'department' },
+		{ title: 'Date of Birth', data: 'dateOfBirth' },
+		{ title: 'Street', data: 'street' },
+		{ title: 'City', data: 'city' },
+		{ title: 'State', data: 'state' },
+		{ title: 'Zip Code', data: 'zipCode' },
+	]
 
 	return (
 		<div id="employee-div" className="container">
 			<h1>Current Employees</h1>
-			<table id="employee-table" className="display"></table>
-			<div>
-				{employees.map(({ id }) => (
-					<p key={id}>name : {id}</p>
-				))}
-			</div>
+
+			<StyledDataTable id="employee-table">
+				<DataTable data={employees} columns={columns} />
+			</StyledDataTable>
+
 			<Link to="/">Home</Link>
-			<button
-				style={{ marginTop: '36px' }}
-				onClick={() => {
-					dispatch(
-						createEmployee({
-							firstName: 'ttt',
-							lastName: 'tt',
-							dateOfBirth: '11/07/2023',
-							startDate: '11/07/2023',
-							department: 'Marketing',
-							street: 'tt',
-							city: 'tt',
-							state: 'DC',
-							zipCode: 44,
-						})
-					)
-				}}
-			>
-				add
-			</button>
 		</div>
 	)
 }
