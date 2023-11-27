@@ -1,7 +1,7 @@
 import { selectEmployees } from '@/usecases/employees-slice'
 import { Link } from 'react-router-dom'
 import { useSelector } from '@/store'
-import { DataTable } from 'oc-hrnet-ui'
+import { DataTable } from 'oc-hrnet-ui/DataTable'
 import styled from 'styled-components'
 
 const StyledDataTable = styled.div`
