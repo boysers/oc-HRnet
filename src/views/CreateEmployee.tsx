@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DatePicker, Modal, SelectMenu } from 'oc-hrnet-ui'
+import { Button, DatePicker, Modal, SelectMenu, TextField, Fieldset } from 'oc-hrnet-ui'
 import { STATES } from '@/constants/states'
 import { useDispatch } from '@/store'
 import { createEmployee } from '@/usecases/employees-slice'
@@ -125,8 +125,7 @@ export const CreateEmployee: React.FC = () => {
 				<form ref={formRef} action="#" id="create-employee">
 					<div className="field">
 						<label htmlFor="first-name">First Name</label>
-						<input
-							type="text"
+						<TextField
 							id="first-name"
 							name="firstName"
 							value={fields.firstName}
@@ -137,8 +136,7 @@ export const CreateEmployee: React.FC = () => {
 
 					<div className="field">
 						<label htmlFor="last-name">Last Name</label>
-						<input
-							type="text"
+						<TextField
 							id="last-name"
 							name="lastName"
 							value={fields.lastName}
@@ -169,14 +167,11 @@ export const CreateEmployee: React.FC = () => {
 						<span className="field-error">{errors.startDate}</span>
 					</div>
 
-					<fieldset className="address">
-						<legend>Address</legend>
-
+					<Fieldset legend="Address" className="address">
 						<div className="field">
 							<label htmlFor="street">Street</label>
-							<input
+							<TextField
 								id="street"
-								type="text"
 								name="street"
 								value={fields.street}
 								onChange={handleFieldChange}
@@ -186,9 +181,8 @@ export const CreateEmployee: React.FC = () => {
 
 						<div className="field">
 							<label htmlFor="city">City</label>
-							<input
+							<TextField
 								id="city"
-								type="text"
 								name="city"
 								value={fields.city}
 								onChange={handleFieldChange}
@@ -213,7 +207,7 @@ export const CreateEmployee: React.FC = () => {
 
 						<div className="field">
 							<label htmlFor="zip-code">Zip Code</label>
-							<input
+							<TextField
 								id="zip-code"
 								type="number"
 								name="zipCode"
@@ -222,7 +216,7 @@ export const CreateEmployee: React.FC = () => {
 							/>
 							<span className="field-error">{errors.zipCode}</span>
 						</div>
-					</fieldset>
+					</Fieldset>
 
 					<div className="field">
 						<label htmlFor="department">Department</label>
@@ -240,7 +234,7 @@ export const CreateEmployee: React.FC = () => {
 					</div>
 				</form>
 
-				<button onClick={handleSubmit}>Save</button>
+				<Button onClick={handleSubmit}>Save</Button>
 			</div>
 			<Modal isOpen={isModalOpen} onClose={toggleModal}>
 				<div>
