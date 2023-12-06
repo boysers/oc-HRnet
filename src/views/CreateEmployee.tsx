@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button, DatePicker, Modal, SelectMenu, TextField, Fieldset } from 'oc-hrnet-ui'
 import { STATES } from '@/constants/states'
 import { useDispatch } from '@/store'
-import { createEmployee } from '@/usecases/employees-slice'
+import { createEmployeeAsync } from '@/usecases/employees-slice'
 import { DEPARTMENTS } from '@/constants/departments'
 
 type Fields = {
@@ -19,30 +19,39 @@ type Fields = {
 }
 
 class Validator {
+	private static readonly MIN_LENGTH = 2
+	private static readonly ZIP_CODE_PATTERN = /^\d{5}$/
+
+	private static validateMinLength(value: string, minLength = this.MIN_LENGTH): string {
+		return value.length < minLength ? `Must be at least ${minLength} characters.` : ''
+	}
+
+	private static validateDate(value: string): string {
+		return isNaN(new Date(value)?.getTime()) ? 'Invalid date.' : ''
+	}
+
+	private static containsNumber(value: string): string {
+		return /\d/.test(value) ? 'Cannot contain numbers.' : ''
+	}
+
 	static validateField(name: keyof Fields, value: string): string {
 		switch (name) {
 			case 'firstName':
-				return value.length < 2 ? 'First name must be at least 2 characters.' : ''
+				return this.validateMinLength(value) || this.containsNumber(value)
 			case 'lastName':
-				return value.length < 2 ? 'Last name must be at least 2 characters.' : ''
+				return this.validateMinLength(value) || this.containsNumber(value)
 			case 'dateOfBirth':
-				if (isNaN(new Date(value)?.getTime())) {
-					return 'Invalid date of birth.'
-				}
-				return ''
+				return this.validateDate(value)
 			case 'startDate':
-				if (isNaN(new Date(value)?.getTime())) {
-					return 'Invalid start date.'
-				}
-				return ''
+				return this.validateDate(value)
 			case 'street':
-				return value.length < 5 ? 'Street must be at least 5 characters.' : ''
+				return this.validateMinLength(value)
 			case 'city':
-				return value.length < 2 ? 'City must be at least 2 characters.' : ''
+				return this.validateMinLength(value) || this.containsNumber(value)
 			case 'state':
 				return ''
 			case 'zipCode':
-				return /^\d{5}$/.test(value) ? '' : 'Zip code must have 5 digits.'
+				return this.ZIP_CODE_PATTERN.test(value) ? '' : 'Zip code must have 5 digits.'
 			case 'department':
 				return ''
 			default:
@@ -82,6 +91,12 @@ export const CreateEmployee: React.FC = () => {
 
 	const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target
+		if (value) {
+			setErrors((prevFields) => ({
+				...prevFields,
+				[name]: '',
+			}))
+		}
 		setFields((prevFields) => ({
 			...prevFields,
 			[name]: value,
@@ -110,7 +125,7 @@ export const CreateEmployee: React.FC = () => {
 
 		if (hasErrors) return
 
-		dispatch(createEmployee(fields))
+		dispatch(createEmployeeAsync(fields))
 		toggleModal()
 	}
 

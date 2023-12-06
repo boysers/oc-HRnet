@@ -1,6 +1,7 @@
 export interface EmployeesState {
 	data: Array<Employee>
-	error?: string | undefined
+	status: 'idle' | 'loading' | 'succeeded' | 'failed'
+	error?: string | null
 }
 
 export type Employee = {

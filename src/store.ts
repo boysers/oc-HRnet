@@ -14,7 +14,7 @@ export const store = configureStore({
 })
 
 export type RootState = ReturnType<typeof store.getState>
-export type AppDispath = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch
 export type AppStore = typeof store
 
 export const useSelector = <TSelected = unknown>(
@@ -22,4 +22,4 @@ export const useSelector = <TSelected = unknown>(
 	equalityFn?: EqualityFn<TSelected> | undefined
 ): TSelected => useSelectorBase(selector, equalityFn)
 
-export const useDispatch = () => useDispatchBase<AppDispath>()
+export const useDispatch = () => useDispatchBase<AppDispatch>()

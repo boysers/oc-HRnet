@@ -1,128 +1,6 @@
-import { EmployeesState } from '@/entities/employees-types'
-import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit'
-
-const mockedEmployees = [
-	{
-		id: 1,
-		firstName: 'John',
-		lastName: 'Smith',
-		dateOfBirth: '1985-03-15',
-		startDate: '2022-01-10',
-		department: 'Sales',
-		street: '123 Main Street',
-		city: 'New York',
-		state: 'NY',
-		zipCode: '10001',
-	},
-	{
-		id: 2,
-		firstName: 'Emily',
-		lastName: 'Johnson',
-		dateOfBirth: '1990-08-20',
-		startDate: '2021-11-05',
-		department: 'Marketing',
-		street: '456 Oak Avenue',
-		city: 'Los Angeles',
-		state: 'CA',
-		zipCode: '90001',
-	},
-	{
-		id: 3,
-		firstName: 'Michael',
-		lastName: 'Williams',
-		dateOfBirth: '1987-06-10',
-		startDate: '2023-02-15',
-		department: 'Engineering',
-		street: '789 Pine Street',
-		city: 'San Francisco',
-		state: 'CA',
-		zipCode: '94101',
-	},
-	{
-		id: 4,
-		firstName: 'Jessica',
-		lastName: 'Miller',
-		dateOfBirth: '1992-11-08',
-		startDate: '2022-07-05',
-		department: 'Human Resources',
-		street: '101 Maple Lane',
-		city: 'Chicago',
-		state: 'IL',
-		zipCode: '60601',
-	},
-	{
-		id: 5,
-		firstName: 'Brian',
-		lastName: 'Davis',
-		dateOfBirth: '1989-04-25',
-		startDate: '2023-03-20',
-		department: 'Legal',
-		street: '202 Cedar Avenue',
-		city: 'Dallas',
-		state: 'TX',
-		zipCode: '75201',
-	},
-	{
-		id: 6,
-		firstName: 'Jennifer',
-		lastName: 'Brown',
-		dateOfBirth: '1991-09-12',
-		startDate: '2021-08-15',
-		department: 'Sales',
-		street: '303 Elm Street',
-		city: 'Miami',
-		state: 'FL',
-		zipCode: '33101',
-	},
-	{
-		id: 7,
-		firstName: 'David',
-		lastName: 'Clark',
-		dateOfBirth: '1986-12-30',
-		startDate: '2022-05-10',
-		department: 'Marketing',
-		street: '404 Walnut Avenue',
-		city: 'Atlanta',
-		state: 'GA',
-		zipCode: '30301',
-	},
-	{
-		id: 8,
-		firstName: 'Amanda',
-		lastName: 'White',
-		dateOfBirth: '1994-06-18',
-		startDate: '2023-04-03',
-		department: 'Engineering',
-		street: '505 Birch Lane',
-		city: 'Seattle',
-		state: 'WA',
-		zipCode: '98101',
-	},
-	{
-		id: 9,
-		firstName: 'Kevin',
-		lastName: 'Anderson',
-		dateOfBirth: '1987-03-05',
-		startDate: '2021-12-05',
-		department: 'Human Resources',
-		street: '606 Oak Street',
-		city: 'Denver',
-		state: 'CO',
-		zipCode: '80201',
-	},
-	{
-		id: 10,
-		firstName: 'Laura',
-		lastName: 'Moore',
-		dateOfBirth: '1993-08-22',
-		startDate: '2022-10-20',
-		department: 'Legal',
-		street: '707 Pine Avenue',
-		city: 'Houston',
-		state: 'TX',
-		zipCode: '77001',
-	},
-]
+import { Employee, EmployeesState } from '@/entities/employees-types'
+import { AppDispatch, RootState } from '@/store'
+import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 
 export type EmployeePayloadAction = {
 	firstName: string
@@ -136,7 +14,55 @@ export type EmployeePayloadAction = {
 	zipCode: string
 }
 
-const initialState: EmployeesState = { data: mockedEmployees }
+interface ResponseError {
+	message: string
+	error: string
+	statusCode: number
+}
+
+export const getEmployeesAsync = createAsyncThunk<
+	Array<Employee>,
+	undefined,
+	{
+		dispatch: AppDispatch
+		state: RootState
+		rejectValue: ResponseError
+	}
+>('employees/fetchEmployees', async (_, thunkApi) => {
+	const res = await fetch('http://localhost:3000/employees')
+
+	if (!res.ok) {
+		return thunkApi.rejectWithValue((await res.json()) as ResponseError)
+	}
+
+	return (await res.json()) as Array<Employee>
+})
+
+export const createEmployeeAsync = createAsyncThunk<
+	Employee,
+	EmployeePayloadAction,
+	{
+		dispatch: AppDispatch
+		state: RootState
+		rejectValue: ResponseError
+	}
+>('employees/createEmployee', async (employeeData, thunkApi) => {
+	const res = await fetch('http://localhost:3000/employees', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(employeeData),
+	})
+
+	if (!res.ok) {
+		return thunkApi.rejectWithValue(await res.json())
+	}
+
+	return await res.json()
+})
+
+const initialState: EmployeesState = { data: [], status: 'idle', error: null }
 
 export const employeesSlice = createSlice({
 	name: 'employees',
@@ -146,6 +72,31 @@ export const employeesSlice = createSlice({
 			state.data.push({ ...action.payload, id: state.data.length + 1 })
 		},
 	},
+	extraReducers(builder) {
+		builder
+			.addCase(getEmployeesAsync.pending, (state) => {
+				state.status = 'loading'
+			})
+			.addCase(getEmployeesAsync.fulfilled, (state, action) => {
+				state.status = 'succeeded'
+				state.data = action.payload
+			})
+			.addCase(getEmployeesAsync.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.payload ? action.payload.message : action.error.message
+			})
+			.addCase(createEmployeeAsync.pending, (state) => {
+				state.status = 'loading'
+			})
+			.addCase(createEmployeeAsync.fulfilled, (state, action) => {
+				state.status = 'succeeded'
+				state.data.push(action.payload)
+			})
+			.addCase(createEmployeeAsync.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.payload ? action.payload.message : action.error.message
+			})
+	},
 })
 
 export const selectEmployeesState = (state: { employees: EmployeesState }) => state.employees
@@ -153,5 +104,10 @@ export const selectEmployeesState = (state: { employees: EmployeesState }) => st
 export const { createEmployee } = employeesSlice.actions
 
 export const selectEmployees = createSelector(selectEmployeesState, (employees) => employees.data)
+
+export const selectEmployeesStatus = createSelector(
+	selectEmployeesState,
+	(employees) => employees.status
+)
 
 export default employeesSlice.reducer
