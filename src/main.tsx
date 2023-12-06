@@ -22,7 +22,7 @@ const main = async () => {
 				</Provider>
 			) : (
 				<main>
-					<h1>Une erreur c'est produite</h1>
+					<h1>Une erreur s'est produite</h1>
 					<p>{employees.error}</p>
 				</main>
 			)}

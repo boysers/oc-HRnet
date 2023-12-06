@@ -32,10 +32,10 @@ export const getEmployeesAsync = createAsyncThunk<
 	const res = await fetch('http://localhost:3000/employees')
 
 	if (!res.ok) {
-		return thunkApi.rejectWithValue((await res.json()) as ResponseError)
+		return thunkApi.rejectWithValue(await res.json())
 	}
 
-	return (await res.json()) as Array<Employee>
+	return await res.json()
 })
 
 export const createEmployeeAsync = createAsyncThunk<
