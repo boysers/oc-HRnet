@@ -3,6 +3,14 @@
 	"version": "0.0.1",
 	"description": "HRnet, une application de gestion des employés de WealthHealth, a été repensée pour une performance et une maintenabilité optimales.",
 	"type": "module",
+	"author": {
+		"name": "boysers"
+	},
+	"keywords": [
+		"react",
+		"typescript",
+		"datatable"
+	],
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
